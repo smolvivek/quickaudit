@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="512" cy="512" r="512" fill="#2196F3"/>
+  
+  <!-- Checkmark -->
+  <path d="M320 512L448 640L768 320" stroke="white" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Q Letter -->
+  <path d="M512 256C384 256 288 352 288 480C288 608 384 704 512 704C640 704 736 608 736 480C736 352 640 256 512 256ZM512 640C416 640 352 576 352 480C352 384 416 320 512 320C608 320 672 384 672 480C672 576 608 640 512 640Z" fill="white"/>
+</svg> 
