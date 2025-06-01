@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - Audit Execution</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .audit-execution-container {
+            padding-bottom: 5rem;
+        }
+        
+        .header-progress {
+            height: 0.25rem;
+            background-color: var(--border);
+            margin-top: 0.5rem;
+        }
+        
+        .header-progress-fill {
+            height: 100%;
+            background-color: var(--primary-blue);
+            width: 35%;
+        }
+        
+        .section-navigation {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        
+        .section-title {
+            font-weight: 600;
+        }
+        
+        .section-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        
+        .section-status-indicator {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-completed {
+            background-color: var(--success);
+        }
+        
+        .status-in-progress {
+            background-color: var(--primary-blue);
+        }
+        
+        .status-pending {
+            background-color: var(--light-text);
+        }
+        
+        .section-items {
+            padding: 0.5rem 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .section-expanded .section-items {
+            max-height: 500px;
+        }
+        
+        .section-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        
+        .section-item:last-child {
+            border-bottom: none;
+        }
+        
+        .section-item.active {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        
+        .checklist-item {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .item-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .compliance-options {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .compliance-option {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .compliance-option.selected {
+            border-color: currentColor;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .compliance-compliant {
+            color: var(--success);
+        }
+        
+        .compliance-non-compliant {
+            color: var(--error);
+        }
+        
+        .compliance-na {
+            color: var(--light-text);
+        }
+        
+        .severity-selector {
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .severity-selector.visible {
+            display: block;
+        }
+        
+        .severity-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .severity-option {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .severity-option.selected {
+            border-color: currentColor;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .severity-low {
+            color: var(--warning);
+        }
+        
+        .severity-medium {
+            color: var(--warning);
+        }
+        
+        .severity-high {
+            color: var(--error);
+        }
+        
+        .evidence-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .evidence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .evidence-title {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .evidence-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .evidence-action {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+        
+        .evidence-thumbnails {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .evidence-thumbnail {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 0.25rem;
+            background-color: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            flex-shrink: 0;
+        }
+        
+        .notes-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .timer-badge {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="header-title">Safety Inspection</div>
+        <div class="header-actions">
+            <div class="timer-badge">
+                <i class="fas fa-clock"></i>
+                <span>12:45</span>
+            </div>
+        </div>
+        <div class="header-progress">
+            <div class="header-progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="container audit-execution-container">
+        <div class="section-navigation">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">General Safety</div>
+                <div class="section-status">
+                    <div class="section-status-indicator status-in-progress"></div>
+                    <span>In Progress</span>
+                </div>
+            </div>
+            <div class="section-items">
+                <div class="section-item active">1. Emergency exits are clearly marked</div>
+                <div class="section-item">2. Fire extinguishers are accessible</div>
+                <div class="section-item">3. First aid kits are stocked and accessible</div>
+                <div class="section-item">4. Evacuation plans are posted</div>
+                <div class="section-item">5. Emergency lighting is functional</div>
+            </div>
+        </div>
+        
+        <div class="section-navigation">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">Electrical Safety</div>
+                <div class="section-status">
+                    <div class="section-status-indicator status-pending"></div>
+                    <span>Pending</span>
+                </div>
+            </div>
+            <div class="section-items">
+                <div class="section-item">1. Electrical panels are accessible</div>
+                <div class="section-item">2. No exposed wiring</div>
+                <div class="section-item">3. Proper use of extension cords</div>
+                <div class="section-item">4. GFCI outlets in wet areas</div>
+            </div>
+        </div>
+        
+        <div class="section-navigation">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">Workplace Hazards</div>
+                <div class="section-status">
+                    <div class="section-status-indicator status-pending"></div>
+                    <span>Pending</span>
+                </div>
+            </div>
+            <div class="section-items">
+                <div class="section-item">1. Slip, trip, and fall hazards</div>
+                <div class="section-item">2. Proper storage of materials</div>
+                <div class="section-item">3. Adequate lighting</div>
+                <div class="section-item">4. Proper ventilation</div>
+            </div>
+        </div>
+        
+        <div class="checklist-item">
+            <div class="item-question">
+                Are emergency exits clearly marked and unobstructed?
+            </div>
+            
+            <div class="compliance-options">
+                <div class="compliance-option compliance-compliant" onclick="selectCompliance(this, 'compliant')">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                    <span>Compliant</span>
+                </div>
+                <div class="compliance-option compliance-non-compliant" onclick="selectCompliance(this, 'non-compliant')">
+                    <i class="fas fa-times-circle fa-2x"></i>
+                    <span>Non-Compliant</span>
+                </div>
+                <div class="compliance-option compliance-na" onclick="selectCompliance(this, 'na')">
+                    <i class="fas fa-ban fa-2x"></i>
+                    <span>N/A</span>
+                </div>
+            </div>
+            
+            <div class="severity-selector" id="severity-selector">
+                <div class="form-label">Severity</div>
+                <div class="severity-options">
+                    <div class="severity-option severity-low" onclick="selectSeverity(this)">Low</div>
+                    <div class="severity-option severity-medium" onclick="selectSeverity(this)">Medium</div>
+                    <div class="severity-option severity-high" onclick="selectSeverity(this)">High</div>
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-header">
+                    <div class="evidence-title">Evidence</div>
+                    <div class="evidence-actions">
+                        <div class="evidence-action">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="evidence-action">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="evidence-thumbnails">
+                    <div class="evidence-thumbnail">
+                        <i class="fas fa-image"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notes-section">
+                <div class="form-group">
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea id="notes" class="form-control" rows="3" placeholder="Add notes or observations"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-secondary">Previous</button>
+            <button class="btn btn-primary" onclick="window.location.href='report_summary.html'">Next</button>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-home"></i></div>
+            <div>Dashboard</div>
+        </a>
+        <a href="#" class="bottom-nav-item active">
+            <div class="bottom-nav-icon"><i class="fas fa-clipboard-check"></i></div>
+            <div>Audits</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-file-alt"></i></div>
+            <div>Templates</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>Reports</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-ellipsis-h"></i></div>
+            <div>More</div>
+        </a>
+    </div>
+    
+    <script>
+        function toggleSection(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('section-expanded');
+        }
+        
+        function selectCompliance(element, type) {
+            // Remove selected class from all compliance options
+            document.querySelectorAll('.compliance-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Show severity selector if non-compliant is selected
+            const severitySelector = document.getElementById('severity-selector');
+            if (type === 'non-compliant') {
+                severitySelector.classList.add('visible');
+            } else {
+                severitySelector.classList.remove('visible');
+            }
+        }
+        
+        function selectSeverity(element) {
+            // Remove selected class from all severity options
+            document.querySelectorAll('.severity-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+        }
+        
+        // Expand the first section by default
+        document.querySelector('.section-navigation').classList.add('section-expanded');
+    </script>
+</body>
+</html>

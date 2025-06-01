@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    {
+      "name": "react-native-reanimated",
+      "androidPackage": "com.swmansion.reanimated.ReanimatedPackage"
+    },
+    {
+      "name": "@react-native-firebase/app",
+      "androidPackage": "io.invertase.firebase.app.ReactNativeFirebaseAppPackage"
+    },
+    {
+      "name": "@react-native-firebase/messaging",
+      "androidPackage": "io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage"
+    }
+  ]
+} 

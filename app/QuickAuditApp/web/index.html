@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickAudit Web Preview</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 8px;
+    }
+    
+    .card-subtitle {
+      font-size: 14px;
+      color: #757575;
+    }
+    
+    .nav {
+      display: flex;
+      background-color: white;
+      border-top: 1px solid #e0e0e0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      justify-content: space-around;
+    }
+    
+    .nav-item {
+      padding: 16px;
+      text-align: center;
+      flex: 1;
+    }
+    
+    .nav-item.active {
+      color: #4CAF50;
+      border-top: 2px solid #4CAF50;
+    }
+    
+    .screen {
+      display: none;
+      padding-bottom: 60px;
+    }
+    
+    .screen.active {
+      display: block;
+    }
+    
+    .audit-item {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .audit-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .audit-date {
+      font-size: 14px;
+      color: #757575;
+      margin-bottom: 8px;
+    }
+    
+    .audit-status {
+      font-size: 14px;
+      color: #4CAF50;
+      margin-bottom: 8px;
+    }
+    
+    .audit-score {
+      display: inline-block;
+      background-color: #E8F5E9;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #4CAF50;
+      font-weight: bold;
+    }
+    
+    .back-button {
+      font-size: 18px;
+      color: #4CAF50;
+      margin-right: 16px;
+      cursor: pointer;
+    }
+    
+    .header-with-back {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px;
+    }
+    
+    .avatar-text {
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .profile-name {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    
+    .profile-email {
+      font-size: 16px;
+      color: #757575;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 16px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background-color: white;
+      border-radius: 8px;
+      width: 30%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #757575;
+    }
+    
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    .home-card {
+      width: 48%;
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+      <div class="header">
+        <h1>QuickAudit</h1>
+        <p>Streamline your audit process</p>
+      </div>
+      <div class="content">
+        <div class="card-container">
+          <div class="home-card" onclick="showScreen('audits-screen')">
+            <div class="card-title">My Audits</div>
+            <div class="card-subtitle">View and manage your audits</div>
+          </div>
+          <div class="home-card">
+            <div class="card-title">Create Audit</div>
+            <div class="card-subtitle">Start a new audit</div>
+          </div>
+          <div class="home-card">
+            <div class="card-title">Reports</div>
+            <div class="card-subtitle">View and share reports</div>
+          </div>
+          <div class="home-card" onclick="showScreen('profile-screen')">
+            <div class="card-title">My Profile</div>
+            <div class="card-subtitle">View and edit your profile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Audits Screen -->
+    <div id="audits-screen" class="screen">
+      <div class="header-with-back">
+        <span class="back-button" onclick="showScreen('home-screen')">←</span>
+        <span class="header-title">My Audits</span>
+      </div>
+      <div class="audit-list">
+        <div class="audit-item">
+          <div class="audit-title">Audit #1</div>
+          <div class="audit-date">May 30, 2025</div>
+          <div class="audit-status">Status: Complete</div>
+          <div class="audit-score">Score: 85%</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-title">Audit #2</div>
+          <div class="audit-date">May 29, 2025</div>
+          <div class="audit-status">Status: Complete</div>
+          <div class="audit-score">Score: 92%</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-title">Audit #3</div>
+          <div class="audit-date">May 28, 2025</div>
+          <div class="audit-status">Status: In Progress</div>
+          <div class="audit-score">Score: --</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Profile Screen -->
+    <div id="profile-screen" class="screen">
+      <div class="header-with-back">
+        <span class="back-button" onclick="showScreen('home-screen')">←</span>
+        <span class="header-title">My Profile</span>
+      </div>
+      <div class="profile-container">
+        <div class="avatar">
+          <div class="avatar-text">VM</div>
+        </div>
+        <div class="profile-name">Vivek Mangipudi</div>
+        <div class="profile-email">vivek@example.com</div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Audits</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">85%</div>
+            <div class="stat-label">Avg. Score</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">Pro</div>
+            <div class="stat-label">Plan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="nav">
+    <div id="nav-home" class="nav-item active" onclick="showScreen('home-screen')">Home</div>
+    <div id="nav-audits" class="nav-item" onclick="showScreen('audits-screen')">Audits</div>
+    <div id="nav-reports" class="nav-item">Reports</div>
+    <div id="nav-profile" class="nav-item" onclick="showScreen('profile-screen')">Profile</div>
+  </div>
+  
+  <script>
+    function showScreen(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      
+      // Show the selected screen
+      document.getElementById(screenId).classList.add('active');
+      
+      // Update navigation
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Set active nav item
+      if (screenId === 'home-screen') {
+        document.getElementById('nav-home').classList.add('active');
+      } else if (screenId === 'audits-screen') {
+        document.getElementById('nav-audits').classList.add('active');
+      } else if (screenId === 'profile-screen') {
+        document.getElementById('nav-profile').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

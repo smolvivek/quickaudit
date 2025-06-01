@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - Ultra-modern Audit Management</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border);
+        }
+        
+        .divider-text {
+            padding: 0 1rem;
+            color: var(--light-text);
+        }
+        
+        .alt-login {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alt-login-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background-color: var(--background);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .alt-login-btn:hover {
+            background-color: var(--surface);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+        
+        .role-selector {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .role-selector select {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border);
+            background-color: var(--background);
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container card">
+            <div class="logo-container">
+                <div class="logo">QuickAudit</div>
+                <div class="tagline">Ultra-modern audit management</div>
+            </div>
+            
+            <!-- For prototype purposes, we'll add a role selector -->
+            <div class="role-selector">
+                <label for="role-select">Select user role for prototype:</label>
+                <select id="role-select">
+                    <option value="field_auditor">Field Auditor</option>
+                    <option value="admin">Admin</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="client">Client</option>
+                </select>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email or Username</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <input type="checkbox" id="remember-me">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <a href="#" class="btn-text">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full">Log In</button>
+            </form>
+            
+            <div class="divider">
+                <span class="divider-text">or</span>
+            </div>
+            
+            <div class="alt-login">
+                <button class="alt-login-btn">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button class="alt-login-btn">
+                    <i class="fab fa-microsoft"></i>
+                    <span>Microsoft</span>
+                </button>
+            </div>
+            
+            <div class="footer">
+                <p>Don't have an account? <a href="#" class="btn-text">Contact Administrator</a></p>
+                <p class="mt-2">v1.0.0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const role = document.getElementById('role-select').value;
+            window.location.href = `${role}/dashboard.html`;
+        });
+    </script>
+</body>
+</html>

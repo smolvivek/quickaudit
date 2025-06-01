@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickAudit</title>
+  <style>
+    :root {
+      --primary-color: #3333FF;
+      --secondary-color: #FFFFFF;
+      --accent-color: #00C853;
+      --text-color: #333333;
+      --light-gray: #F5F5F5;
+      --medium-gray: #E0E0E0;
+      --dark-gray: #757575;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 16px;
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .header-text {
+      flex: 1;
+    }
+    
+    .header-text h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    
+    .header-text p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    .content {
+      background-color: var(--secondary-color);
+      padding: 20px;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    .home-card {
+      width: 48%;
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      border: 1px solid var(--medium-gray);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .home-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+    
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--dark-gray);
+    }
+    
+    .nav {
+      display: flex;
+      background-color: var(--secondary-color);
+      border-top: 1px solid var(--medium-gray);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      justify-content: space-around;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .nav-item {
+      padding: 16px;
+      text-align: center;
+      flex: 1;
+      color: var(--dark-gray);
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    
+    .nav-item.active {
+      color: var(--primary-color);
+      border-top: 2px solid var(--primary-color);
+    }
+    
+    .screen {
+      display: none;
+      padding-bottom: 60px;
+    }
+    
+    .screen.active {
+      display: block;
+    }
+    
+    .audit-item {
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--medium-gray);
+    }
+    
+    .audit-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+    
+    .audit-date {
+      font-size: 14px;
+      color: var(--dark-gray);
+      margin-bottom: 8px;
+    }
+    
+    .audit-status {
+      font-size: 14px;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+    
+    .audit-score {
+      display: inline-block;
+      background-color: rgba(0, 200, 83, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+    
+    .back-button {
+      font-size: 18px;
+      color: var(--primary-color);
+      margin-right: 16px;
+      cursor: pointer;
+    }
+    
+    .header-with-back {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px;
+    }
+    
+    .avatar-text {
+      font-size: 36px;
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+    
+    .profile-name {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+    
+    .profile-email {
+      font-size: 16px;
+      color: var(--dark-gray);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 16px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      width: 30%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--medium-gray);
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: var(--dark-gray);
+    }
+    
+    .button {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: #2929cc;
+    }
+    
+    .button.accent {
+      background-color: var(--accent-color);
+    }
+    
+    .button.accent:hover {
+      background-color: #00b249;
+    }
+    
+    .create-audit-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: var(--accent-color);
+      color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 100;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    
+    .create-audit-btn:hover {
+      transform: scale(1.05);
+      background-color: #00b249;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+      <div class="header">
+        <div class="logo">QA</div>
+        <div class="header-text">
+          <h1>QuickAudit</h1>
+          <p>Streamline your audit process</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card-container">
+          <div class="home-card" onclick="showScreen('audits-screen')">
+            <div class="card-title">My Audits</div>
+            <div class="card-subtitle">View and manage your audits</div>
+          </div>
+          <div class="home-card">
+            <div class="card-title">Create Audit</div>
+            <div class="card-subtitle">Start a new audit</div>
+          </div>
+          <div class="home-card">
+            <div class="card-title">Reports</div>
+            <div class="card-subtitle">View and share reports</div>
+          </div>
+          <div class="home-card" onclick="showScreen('profile-screen')">
+            <div class="card-title">My Profile</div>
+            <div class="card-subtitle">View and edit your profile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Audits Screen -->
+    <div id="audits-screen" class="screen">
+      <div class="header-with-back">
+        <span class="back-button" onclick="showScreen('home-screen')">←</span>
+        <span class="header-title">My Audits</span>
+      </div>
+      <div class="audit-list">
+        <div class="audit-item">
+          <div class="audit-title">Audit #1</div>
+          <div class="audit-date">May 31, 2025</div>
+          <div class="audit-status">Status: Complete</div>
+          <div class="audit-score">Score: 85%</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-title">Audit #2</div>
+          <div class="audit-date">May 29, 2025</div>
+          <div class="audit-status">Status: Complete</div>
+          <div class="audit-score">Score: 92%</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-title">Audit #3</div>
+          <div class="audit-date">May 28, 2025</div>
+          <div class="audit-status">Status: In Progress</div>
+          <div class="audit-score">Score: --</div>
+        </div>
+      </div>
+      <div class="create-audit-btn" title="Create New Audit">+</div>
+    </div>
+    
+    <!-- Profile Screen -->
+    <div id="profile-screen" class="screen">
+      <div class="header-with-back">
+        <span class="back-button" onclick="showScreen('home-screen')">←</span>
+        <span class="header-title">My Profile</span>
+      </div>
+      <div class="profile-container">
+        <div class="avatar">
+          <div class="avatar-text">VM</div>
+        </div>
+        <div class="profile-name">Vivek Mangipudi</div>
+        <div class="profile-email">vivek@example.com</div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Audits</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">85%</div>
+            <div class="stat-label">Avg. Score</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">Pro</div>
+            <div class="stat-label">Plan</div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 24px; text-align: center;">
+          <button class="button">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="nav">
+    <div id="nav-home" class="nav-item active" onclick="showScreen('home-screen')">Home</div>
+    <div id="nav-audits" class="nav-item" onclick="showScreen('audits-screen')">Audits</div>
+    <div id="nav-reports" class="nav-item">Reports</div>
+    <div id="nav-profile" class="nav-item" onclick="showScreen('profile-screen')">Profile</div>
+  </div>
+  
+  <script>
+    function showScreen(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      
+      // Show the selected screen
+      document.getElementById(screenId).classList.add('active');
+      
+      // Update navigation
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Set active nav item
+      if (screenId === 'home-screen') {
+        document.getElementById('nav-home').classList.add('active');
+      } else if (screenId === 'audits-screen') {
+        document.getElementById('nav-audits').classList.add('active');
+      } else if (screenId === 'profile-screen') {
+        document.getElementById('nav-profile').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

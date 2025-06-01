@@ -1,0 +1,19 @@
+{
+  "name": "QuickAudit",
+  "version": "1.0.0",
+  "bundleId": "com.quickaudit.app",
+  "description": "QuickAudit is a powerful mobile application for conducting audits and inspections on the go. With QuickAudit, users can create, execute, and manage audits, track findings, and generate comprehensive reports.",
+  "keywords": [
+    "audit",
+    "inspection",
+    "safety",
+    "compliance",
+    "quality",
+    "checklist",
+    "report"
+  ],
+  "supportUrl": "https://quickaudit.com/support",
+  "privacyPolicyUrl": "https://quickaudit.com/privacy",
+  "marketingUrl": "https://quickaudit.com",
+  "releaseNotes": "Initial release of QuickAudit app."
+}

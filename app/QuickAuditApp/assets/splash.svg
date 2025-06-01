@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2048" height="2048" viewBox="0 0 2048 2048" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="2048" height="2048" fill="#2196F3"/>
+  
+  <!-- Logo -->
+  <g transform="translate(512, 512) scale(2)">
+    <!-- Checkmark -->
+    <path d="M320 512L448 640L768 320" stroke="white" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Q Letter -->
+    <path d="M512 256C384 256 288 352 288 480C288 608 384 704 512 704C640 704 736 608 736 480C736 352 640 256 512 256ZM512 640C416 640 352 576 352 480C352 384 416 320 512 320C608 320 672 384 672 480C672 576 608 640 512 640Z" fill="white"/>
+  </g>
+  
+  <!-- App Name -->
+  <text x="1024" y="1400" font-family="System" font-size="120" fill="white" text-anchor="middle">QuickAudit</text>
+  <text x="1024" y="1550" font-family="System" font-size="48" fill="white" text-anchor="middle">Professional Audit Management</text>
+</svg> 

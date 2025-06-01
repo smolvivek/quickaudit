@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - User Management</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--surface);
+        }
+        
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--background);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .admin-badge {
+            background-color: var(--primary-blue);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .sidebar-menu {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-title {
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--surface);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+            border-right: 3px solid var(--primary-blue);
+        }
+        
+        .menu-icon {
+            width: 1.5rem;
+            margin-right: 0.75rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        
+        .user-dropdown:hover {
+            background-color: var(--surface);
+        }
+        
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        
+        .user-info {
+            line-height: 1.2;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+        
+        .table-card {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .search-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background-color: var(--background);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+        }
+        
+        .filter-dropdown {
+            position: relative;
+        }
+        
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background-color: var(--background);
+            cursor: pointer;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+        
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-inactive {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .row-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .row-action {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--surface);
+            color: var(--light-text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .row-action:hover {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+        
+        .page-info {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .page-controls {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .page-button {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .page-button:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .page-button.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .user-profile-pic {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .user-name-email {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-details {
+            line-height: 1.2;
+        }
+        
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-full {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-text">QuickAudit</div>
+                <div class="admin-badge">Admin</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Main</div>
+                <a href="dashboard.html" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-th-large"></i></div>
+                    <div>Dashboard</div>
+                </a>
+                <a href="user_management.html" class="menu-item active">
+                    <div class="menu-icon"><i class="fas fa-users"></i></div>
+                    <div>Users & Teams</div>
+                </a>
+                <a href="template_management.html" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-file-alt"></i></div>
+                    <div>Templates & Forms</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div>Reports & Analytics</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Settings</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-cog"></i></div>
+                    <div>General Settings</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-plug"></i></div>
+                    <div>Integrations</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>Security</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Support</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+                    <div>Help & Support</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-book"></i></div>
+                    <div>Documentation</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> Add New User
+                    </button>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-info">
+                            <div class="user-name">Alex Davis</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">All Users</div>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Search users...">
+                    </div>
+                    <div class="filter-dropdown">
+                        <div class="filter-button">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Team/Department</th>
+                            <th>Last Active</th>
+                            <th>Audits</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">JS</div>
+                                    <div class="user-details">
+                                        <div>John Smith</div>
+                                        <div class="user-email">john.smith@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Field Auditor</td>
+                            <td>Operations</td>
+                            <td>Today</td>
+                            <td>42</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">SJ</div>
+                                    <div class="user-details">
+                                        <div>Sarah Johnson</div>
+                                        <div class="user-email">sarah.j@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Supervisor</td>
+                            <td>Quality Assurance</td>
+                            <td>Yesterday</td>
+                            <td>18</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">MW</div>
+                                    <div class="user-details">
+                                        <div>Mike Williams</div>
+                                        <div class="user-email">mike.w@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Field Auditor</td>
+                            <td>Maintenance</td>
+                            <td>2 days ago</td>
+                            <td>27</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">ED</div>
+                                    <div class="user-details">
+                                        <div>Emily Davis</div>
+                                        <div class="user-email">emily.d@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Field Auditor</td>
+                            <td>Safety</td>
+                            <td>3 days ago</td>
+                            <td>15</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">RB</div>
+                                    <div class="user-details">
+                                        <div>Robert Brown</div>
+                                        <div class="user-email">robert.b@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Client</td>
+                            <td>Executive</td>
+                            <td>1 week ago</td>
+                            <td>0</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">LM</div>
+                                    <div class="user-details">
+                                        <div>Lisa Miller</div>
+                                        <div class="user-email">lisa.m@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Admin</td>
+                            <td>IT</td>
+                            <td>Today</td>
+                            <td>5</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-name-email">
+                                    <div class="user-profile-pic">TW</div>
+                                    <div class="user-details">
+                                        <div>Tom Wilson</div>
+                                        <div class="user-email">tom.w@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Field Auditor</td>
+                            <td>Operations</td>
+                            <td>Never</td>
+                            <td>0</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="row-action"><i class="fas fa-edit"></i></div>
+                                    <div class="row-action"><i class="fas fa-key"></i></div>
+                                    <div class="row-action"><i class="fas fa-trash-alt"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <div class="page-info">
+                        Showing 1-7 of 24 users
+                    </div>
+                    <div class="page-controls">
+                        <div class="page-button">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="page-button active">1</div>
+                        <div class="page-button">2</div>
+                        <div class="page-button">3</div>
+                        <div class="page-button">4</div>
+                        <div class="page-button">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Add New User</div>
+                <button class="modal-close" onclick="hideAddUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="first-name">First Name</label>
+                        <input type="text" id="first-name" class="form-control" placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="last-name">Last Name</label>
+                        <input type="text" id="last-name" class="form-control" placeholder="Enter last name">
+                    </div>
+                    <div class="form-group form-full">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="role">Role</label>
+                        <select id="role" class="form-control">
+                            <option value="">Select role</option>
+                            <option value="admin">Admin</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="field_auditor">Field Auditor</option>
+                            <option value="client">Client</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="department">Department</label>
+                        <select id="department" class="form-control">
+                            <option value="">Select department</option>
+                            <option value="operations">Operations</option>
+                            <option value="quality">Quality Assurance</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="safety">Safety</option>
+                            <option value="executive">Executive</option>
+                            <option value="it">IT</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-full">
+                        <label class="form-label">Send Welcome Email</label>
+                        <div class="flex items-center mt-2">
+                            <input type="checkbox" id="welcome-email" checked>
+                            <label for="welcome-email" class="ml-2">Send login instructions to the user</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAddUserModal()">Cancel</button>
+                <button class="btn btn-primary">Add User</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'flex';
+        }
+        
+        function hideAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

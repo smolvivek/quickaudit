@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - Report Summary</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .report-summary-container {
+            padding-bottom: 5rem;
+        }
+        
+        .summary-card {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .score-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .score-gauge {
+            width: 8rem;
+            height: 8rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .score-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--success) 0% 85%,
+                var(--border) 85% 100%
+            );
+            transform: rotate(-90deg);
+        }
+        
+        .score-inner {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: var(--background);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .score-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+        
+        .score-stats {
+            flex: 1;
+            margin-left: 1.5rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .stat-label {
+            color: var(--light-text);
+        }
+        
+        .stat-value {
+            font-weight: 500;
+        }
+        
+        .stat-value.compliant {
+            color: var(--success);
+        }
+        
+        .stat-value.non-compliant {
+            color: var(--error);
+        }
+        
+        .section-summary {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .section-score {
+            font-weight: 600;
+        }
+        
+        .section-score.good {
+            color: var(--success);
+        }
+        
+        .section-score.warning {
+            color: var(--warning);
+        }
+        
+        .section-score.bad {
+            color: var(--error);
+        }
+        
+        .section-bar {
+            height: 0.5rem;
+            background-color: var(--border);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-bar-fill {
+            height: 100%;
+            border-radius: 0.25rem;
+        }
+        
+        .section-bar-fill.good {
+            background-color: var(--success);
+        }
+        
+        .section-bar-fill.warning {
+            background-color: var(--warning);
+        }
+        
+        .section-bar-fill.bad {
+            background-color: var(--error);
+        }
+        
+        .findings-list {
+            margin-bottom: 1.5rem;
+        }
+        
+        .finding-item {
+            display: flex;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .finding-item:last-child {
+            border-bottom: none;
+        }
+        
+        .finding-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .finding-icon.non-compliant {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .finding-details {
+            flex: 1;
+        }
+        
+        .finding-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .finding-meta {
+            display: flex;
+            font-size: 0.75rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .finding-meta > div {
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .finding-meta i {
+            margin-right: 0.25rem;
+        }
+        
+        .finding-action {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--primary-blue);
+        }
+        
+        .finding-action i {
+            margin-right: 0.25rem;
+        }
+        
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .evidence-item {
+            aspect-ratio: 1;
+            background-color: var(--surface);
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+        }
+        
+        .signature-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .signature-box {
+            border: 1px dashed var(--border);
+            border-radius: 0.5rem;
+            height: 8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="header-title">Audit Summary</div>
+        <div class="header-actions">
+            <div class="header-icon">
+                <i class="fas fa-share-alt"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="container report-summary-container">
+        <div class="summary-card">
+            <div class="score-container">
+                <div class="score-gauge">
+                    <div class="score-circle"></div>
+                    <div class="score-inner">
+                        <div class="score-value">85%</div>
+                        <div class="score-label">SCORE</div>
+                    </div>
+                </div>
+                <div class="score-stats">
+                    <div class="stat-row">
+                        <div class="stat-label">Total Items</div>
+                        <div class="stat-value">45</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">Compliant</div>
+                        <div class="stat-value compliant">38</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">Non-Compliant</div>
+                        <div class="stat-value non-compliant">7</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">N/A</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-summary">
+                <div class="section-header">
+                    <div class="section-title">General Safety</div>
+                    <div class="section-score good">100%</div>
+                </div>
+                <div class="section-bar">
+                    <div class="section-bar-fill good" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <div class="section-summary">
+                <div class="section-header">
+                    <div class="section-title">Electrical Safety</div>
+                    <div class="section-score warning">75%</div>
+                </div>
+                <div class="section-bar">
+                    <div class="section-bar-fill warning" style="width: 75%"></div>
+                </div>
+            </div>
+            
+            <div class="section-summary">
+                <div class="section-header">
+                    <div class="section-title">Workplace Hazards</div>
+                    <div class="section-score bad">60%</div>
+                </div>
+                <div class="section-bar">
+                    <div class="section-bar-fill bad" style="width: 60%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">
+            <div class="section-title">Non-Compliance Findings</div>
+        </div>
+        
+        <div class="findings-list card">
+            <div class="finding-item">
+                <div class="finding-icon non-compliant">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="finding-details">
+                    <div class="finding-title">Exposed wiring in break room</div>
+                    <div class="finding-meta">
+                        <div><i class="fas fa-exclamation-circle"></i> High Severity</div>
+                        <div><i class="fas fa-tag"></i> Electrical Safety</div>
+                    </div>
+                    <div class="finding-action">
+                        <i class="fas fa-plus-circle"></i> Add Corrective Action
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-icon non-compliant">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="finding-details">
+                    <div class="finding-title">Blocked fire exit in warehouse</div>
+                    <div class="finding-meta">
+                        <div><i class="fas fa-exclamation-circle"></i> High Severity</div>
+                        <div><i class="fas fa-tag"></i> General Safety</div>
+                    </div>
+                    <div class="finding-action">
+                        <i class="fas fa-plus-circle"></i> Add Corrective Action
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-icon non-compliant">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="finding-details">
+                    <div class="finding-title">Inadequate lighting in stairwell</div>
+                    <div class="finding-meta">
+                        <div><i class="fas fa-exclamation-circle"></i> Medium Severity</div>
+                        <div><i class="fas fa-tag"></i> Workplace Hazards</div>
+                    </div>
+                    <div class="finding-action">
+                        <i class="fas fa-plus-circle"></i> Add Corrective Action
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">
+            <div class="section-title">Evidence Gallery</div>
+        </div>
+        
+        <div class="evidence-grid">
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+            <div class="evidence-item">
+                <i class="fas fa-image"></i>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="final-notes">Final Notes</label>
+            <textarea id="final-notes" class="form-control" rows="3" placeholder="Add any final notes or observations"></textarea>
+        </div>
+        
+        <div class="signature-section">
+            <label class="form-label">Signature</label>
+            <div class="signature-box">
+                <i class="fas fa-signature"></i> Tap to sign
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='audit_execution.html'">Back</button>
+            <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">Submit Report</button>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-home"></i></div>
+            <div>Dashboard</div>
+        </a>
+        <a href="#" class="bottom-nav-item active">
+            <div class="bottom-nav-icon"><i class="fas fa-clipboard-check"></i></div>
+            <div>Audits</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-file-alt"></i></div>
+            <div>Templates</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>Reports</div>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <div class="bottom-nav-icon"><i class="fas fa-ellipsis-h"></i></div>
+            <div>More</div>
+        </a>
+    </div>
+</body>
+</html>

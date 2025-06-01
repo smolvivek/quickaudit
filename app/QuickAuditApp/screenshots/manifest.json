@@ -1,0 +1,49 @@
+{
+  "appName": "QuickAudit",
+  "version": "1.0.0",
+  "generatedAt": "2025-05-29T17:50:44.004Z",
+  "screens": [
+    {
+      "name": "Login",
+      "route": "Login",
+      "description": "The login screen allows users to authenticate with their credentials.",
+      "filename": "login.png",
+      "path": "screenshots/login.png"
+    },
+    {
+      "name": "Dashboard",
+      "route": "Dashboard",
+      "description": "The main dashboard showing an overview of audits and tasks.",
+      "filename": "dashboard.png",
+      "path": "screenshots/dashboard.png"
+    },
+    {
+      "name": "AuditList",
+      "route": "AuditList",
+      "description": "List of all audits with filtering and sorting options.",
+      "filename": "auditlist.png",
+      "path": "screenshots/auditlist.png"
+    },
+    {
+      "name": "AuditForm",
+      "route": "AuditForm",
+      "description": "The audit form screen where users can fill out audit questionnaires.",
+      "filename": "auditform.png",
+      "path": "screenshots/auditform.png"
+    },
+    {
+      "name": "AuditReport",
+      "route": "AuditReport",
+      "description": "Detailed audit report with findings and recommendations.",
+      "filename": "auditreport.png",
+      "path": "screenshots/auditreport.png"
+    },
+    {
+      "name": "ReportSummary",
+      "route": "ReportSummary",
+      "description": "Summary of audit reports with key metrics and scores.",
+      "filename": "reportsummary.png",
+      "path": "screenshots/reportsummary.png"
+    }
+  ]
+}

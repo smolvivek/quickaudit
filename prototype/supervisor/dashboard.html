@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - Supervisor Dashboard</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--surface);
+        }
+        
+        .supervisor-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--background);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .supervisor-badge {
+            background-color: var(--secondary-teal);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .sidebar-menu {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-title {
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--surface);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--secondary-teal);
+            border-right: 3px solid var(--secondary-teal);
+        }
+        
+        .menu-icon {
+            width: 1.5rem;
+            margin-right: 0.75rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        
+        .user-dropdown:hover {
+            background-color: var(--surface);
+        }
+        
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--secondary-teal);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        
+        .user-info {
+            line-height: 1.2;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .icon-teal {
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--secondary-teal);
+        }
+        
+        .icon-green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .icon-yellow {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .icon-red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        
+        .change-positive {
+            color: var(--success);
+        }
+        
+        .change-negative {
+            color: var(--error);
+        }
+        
+        .change-icon {
+            margin-right: 0.25rem;
+        }
+        
+        .approval-queue {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .approval-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .approval-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            background-color: var(--background);
+            transition: all 0.2s ease;
+        }
+        
+        .approval-card:hover {
+            border-color: var(--secondary-teal);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .approval-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .approval-title {
+            font-weight: 600;
+        }
+        
+        .approval-priority {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+        }
+        
+        .priority-high {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .priority-medium {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .priority-low {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .approval-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .meta-item i {
+            margin-right: 0.375rem;
+        }
+        
+        .approval-score {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .score-label {
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin-right: 0.5rem;
+        }
+        
+        .score-value {
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .score-good {
+            color: var(--success);
+        }
+        
+        .score-warning {
+            color: var(--warning);
+        }
+        
+        .score-bad {
+            color: var(--error);
+        }
+        
+        .score-bar {
+            flex: 1;
+            height: 0.375rem;
+            background-color: var(--border);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 9999px;
+        }
+        
+        .score-fill-good {
+            background-color: var(--success);
+        }
+        
+        .score-fill-warning {
+            background-color: var(--warning);
+        }
+        
+        .score-fill-bad {
+            background-color: var(--error);
+        }
+        
+        .approval-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-approve {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .action-approve:hover {
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .action-review {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .action-review:hover {
+            background-color: rgba(251, 191, 36, 0.2);
+        }
+        
+        .team-performance {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .team-member-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+        }
+        
+        .member-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-teal);
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .member-info {
+            flex: 1;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .member-role {
+            font-size: 0.75rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .member-stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-label {
+            color: var(--light-text);
+        }
+        
+        .member-status {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+        
+        .status-online {
+            background-color: var(--success);
+        }
+        
+        .status-away {
+            background-color: var(--warning);
+        }
+        
+        .status-offline {
+            background-color: var(--light-text);
+        }
+        
+        .schedule-section {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .date-nav-button {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--surface);
+            cursor: pointer;
+        }
+        
+        .current-date {
+            font-weight: 600;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .day-column {
+            text-align: center;
+        }
+        
+        .day-header {
+            padding: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .day-today {
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--secondary-teal);
+            border-radius: 0.25rem;
+        }
+        
+        .schedule-event {
+            background-color: var(--surface);
+            border-left: 3px solid var(--secondary-teal);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+        
+        .event-time {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .event-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="supervisor-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-text">QuickAudit</div>
+                <div class="supervisor-badge">Supervisor</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Main</div>
+                <a href="dashboard.html" class="menu-item active">
+                    <div class="menu-icon"><i class="fas fa-th-large"></i></div>
+                    <div>Dashboard</div>
+                </a>
+                <a href="team_management.html" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-users"></i></div>
+                    <div>Team Management</div>
+                </a>
+                <a href="audit_reviews.html" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div>Audit Reviews</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div>Reports & Analytics</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Management</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-tasks"></i></div>
+                    <div>Action Items</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div>Schedule</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-cog"></i></div>
+                    <div>Settings</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Support</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+                    <div>Help & Support</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-book"></i></div>
+                    <div>Documentation</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Supervisor Dashboard</h1>
+                <div class="header-actions">
+                    <div class="user-dropdown">
+                        <div class="user-avatar">SJ</div>
+                        <div class="user-info">
+                            <div class="user-name">Sarah Johnson</div>
+                            <div class="user-role">Supervisor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pending Approvals</div>
+                        <div class="stat-icon icon-teal">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-change change-negative">
+                        <span class="change-icon"><i class="fas fa-arrow-up"></i></span>
+                        <span>3 more than yesterday</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Team Completion Rate</div>
+                        <div class="stat-icon icon-green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">92%</div>
+                    <div class="stat-change change-positive">
+                        <span class="change-icon"><i class="fas fa-arrow-up"></i></span>
+                        <span>5% from last week</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Overdue Actions</div>
+                        <div class="stat-icon icon-red">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-change change-positive">
+                        <span class="change-icon"><i class="fas fa-arrow-down"></i></span>
+                        <span>2 less than yesterday</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="approval-queue">
+                <div class="section-header">
+                    <div class="section-title">Pending Approvals</div>
+                    <button class="btn btn-secondary">View All</button>
+                </div>
+                
+                <div class="approval-list">
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-title">Safety Inspection</div>
+                            <div class="approval-priority priority-high">High</div>
+                        </div>
+                        <div class="approval-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> John Smith</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Main Office</div>
+                            <div class="meta-item"><i class="fas fa-clock"></i> 2 hours ago</div>
+                        </div>
+                        <div class="approval-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">85%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="approval-actions">
+                            <div class="action-button action-approve">Approve</div>
+                            <div class="action-button action-review">Review</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-title">Quality Assurance</div>
+                            <div class="approval-priority priority-medium">Medium</div>
+                        </div>
+                        <div class="approval-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Mike Williams</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Production Line A</div>
+                            <div class="meta-item"><i class="fas fa-clock"></i> 3 hours ago</div>
+                        </div>
+                        <div class="approval-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">92%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="approval-actions">
+                            <div class="action-button action-approve">Approve</div>
+                            <div class="action-button action-review">Review</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-title">Facility Maintenance</div>
+                            <div class="approval-priority priority-low">Low</div>
+                        </div>
+                        <div class="approval-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Emily Davis</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Warehouse</div>
+                            <div class="meta-item"><i class="fas fa-clock"></i> Yesterday</div>
+                        </div>
+                        <div class="approval-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-warning">78%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-warning" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="approval-actions">
+                            <div class="action-button action-approve">Approve</div>
+                            <div class="action-button action-review">Review</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-title">Compliance Check</div>
+                            <div class="approval-priority priority-high">High</div>
+                        </div>
+                        <div class="approval-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Robert Brown</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Finance Department</div>
+                            <div class="meta-item"><i class="fas fa-clock"></i> Yesterday</div>
+                        </div>
+                        <div class="approval-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">95%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="approval-actions">
+                            <div class="action-button action-approve">Approve</div>
+                            <div class="action-button action-review">Review</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-performance">
+                <div class="section-header">
+                    <div class="section-title">Team Status</div>
+                    <button class="btn btn-secondary">Manage Team</button>
+                </div>
+                
+                <div class="team-grid">
+                    <div class="team-member-card">
+                        <div class="member-avatar">JS</div>
+                        <div class="member-info">
+                            <div class="member-name">John Smith</div>
+                            <div class="member-role">Field Auditor</div>
+                            <div class="member-stats">
+                                <div class="member-stat">
+                                    <div class="stat-label">Audits</div>
+                                    <div>42</div>
+                                </div>
+                                <div class="member-stat">
+                                    <div class="stat-label">Score</div>
+                                    <div>87%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-status status-online"></div>
+                    </div>
+                    
+                    <div class="team-member-card">
+                        <div class="member-avatar">MW</div>
+                        <div class="member-info">
+                            <div class="member-name">Mike Williams</div>
+                            <div class="member-role">Field Auditor</div>
+                            <div class="member-stats">
+                                <div class="member-stat">
+                                    <div class="stat-label">Audits</div>
+                                    <div>27</div>
+                                </div>
+                                <div class="member-stat">
+                                    <div class="stat-label">Score</div>
+                                    <div>92%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-status status-online"></div>
+                    </div>
+                    
+                    <div class="team-member-card">
+                        <div class="member-avatar">ED</div>
+                        <div class="member-info">
+                            <div class="member-name">Emily Davis</div>
+                            <div class="member-role">Field Auditor</div>
+                            <div class="member-stats">
+                                <div class="member-stat">
+                                    <div class="stat-label">Audits</div>
+                                    <div>15</div>
+                                </div>
+                                <div class="member-stat">
+                                    <div class="stat-label">Score</div>
+                                    <div>85%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-status status-away"></div>
+                    </div>
+                    
+                    <div class="team-member-card">
+                        <div class="member-avatar">RB</div>
+                        <div class="member-info">
+                            <div class="member-name">Robert Brown</div>
+                            <div class="member-role">Field Auditor</div>
+                            <div class="member-stats">
+                                <div class="member-stat">
+                                    <div class="stat-label">Audits</div>
+                                    <div>31</div>
+                                </div>
+                                <div class="member-stat">
+                                    <div class="stat-label">Score</div>
+                                    <div>90%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-status status-offline"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="schedule-section">
+                <div class="schedule-header">
+                    <div class="section-title">Weekly Schedule</div>
+                    <div class="date-navigation">
+                        <div class="date-nav-button">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="current-date">May 20 - May 26, 2025</div>
+                        <div class="date-nav-button">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="schedule-grid">
+                    <div class="day-column">
+                        <div class="day-header">Mon</div>
+                        <div class="schedule-event">
+                            <div class="event-time">9:00 AM</div>
+                            <div class="event-title">Safety Inspection</div>
+                        </div>
+                        <div class="schedule-event">
+                            <div class="event-time">2:30 PM</div>
+                            <div class="event-title">Quality Check</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header day-today">Tue</div>
+                        <div class="schedule-event">
+                            <div class="event-time">10:30 AM</div>
+                            <div class="event-title">Team Meeting</div>
+                        </div>
+                        <div class="schedule-event">
+                            <div class="event-time">1:15 PM</div>
+                            <div class="event-title">Warehouse Audit</div>
+                        </div>
+                        <div class="schedule-event">
+                            <div class="event-time">3:45 PM</div>
+                            <div class="event-title">Cafeteria Inspection</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header">Wed</div>
+                        <div class="schedule-event">
+                            <div class="event-time">9:30 AM</div>
+                            <div class="event-title">Compliance Review</div>
+                        </div>
+                        <div class="schedule-event">
+                            <div class="event-time">2:00 PM</div>
+                            <div class="event-title">Fire Safety Check</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header">Thu</div>
+                        <div class="schedule-event">
+                            <div class="event-time">11:00 AM</div>
+                            <div class="event-title">Equipment Inspection</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header">Fri</div>
+                        <div class="schedule-event">
+                            <div class="event-time">10:00 AM</div>
+                            <div class="event-title">Weekly Report</div>
+                        </div>
+                        <div class="schedule-event">
+                            <div class="event-time">3:00 PM</div>
+                            <div class="event-title">Retail Store Audit</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header">Sat</div>
+                        <!-- No events -->
+                    </div>
+                    
+                    <div class="day-column">
+                        <div class="day-header">Sun</div>
+                        <!-- No events -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickAudit - Client Dashboard</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--surface);
+        }
+        
+        .client-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--background);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .client-badge {
+            background-color: var(--tertiary-purple);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .sidebar-menu {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-title {
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--surface);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--tertiary-purple);
+            border-right: 3px solid var(--tertiary-purple);
+        }
+        
+        .menu-icon {
+            width: 1.5rem;
+            margin-right: 0.75rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        
+        .user-dropdown:hover {
+            background-color: var(--surface);
+        }
+        
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--tertiary-purple);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        
+        .user-info {
+            line-height: 1.2;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .icon-purple {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--tertiary-purple);
+        }
+        
+        .icon-green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .icon-yellow {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .icon-red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        
+        .change-positive {
+            color: var(--success);
+        }
+        
+        .change-negative {
+            color: var(--error);
+        }
+        
+        .change-icon {
+            margin-right: 0.25rem;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-action {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            background-color: var(--surface);
+            cursor: pointer;
+        }
+        
+        .chart-action.active {
+            background-color: var(--tertiary-purple);
+            color: white;
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            background-color: var(--surface);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+        }
+        
+        .recent-audits {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .audit-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .audit-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            background-color: var(--background);
+            transition: all 0.2s ease;
+        }
+        
+        .audit-card:hover {
+            border-color: var(--tertiary-purple);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .audit-title {
+            font-weight: 600;
+        }
+        
+        .audit-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .meta-item i {
+            margin-right: 0.375rem;
+        }
+        
+        .audit-score {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .score-label {
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin-right: 0.5rem;
+        }
+        
+        .score-value {
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .score-good {
+            color: var(--success);
+        }
+        
+        .score-warning {
+            color: var(--warning);
+        }
+        
+        .score-bad {
+            color: var(--error);
+        }
+        
+        .score-bar {
+            flex: 1;
+            height: 0.375rem;
+            background-color: var(--border);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 9999px;
+        }
+        
+        .score-fill-good {
+            background-color: var(--success);
+        }
+        
+        .score-fill-warning {
+            background-color: var(--warning);
+        }
+        
+        .score-fill-bad {
+            background-color: var(--error);
+        }
+        
+        .audit-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-view {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--tertiary-purple);
+        }
+        
+        .action-view:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+        
+        .action-download {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .action-download:hover {
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .issues-section {
+            background-color: var(--background);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .issues-list {
+            margin-top: 1rem;
+        }
+        
+        .issue-item {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .issue-item:last-child {
+            border-bottom: none;
+        }
+        
+        .issue-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .issue-content {
+            flex: 1;
+        }
+        
+        .issue-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .issue-meta {
+            display: flex;
+            font-size: 0.75rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .issue-meta > div {
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .issue-meta i {
+            margin-right: 0.25rem;
+        }
+        
+        .issue-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        
+        .status-open {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .status-in-progress {
+            background-color: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-resolved {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-date {
+            color: var(--light-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="client-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-text">QuickAudit</div>
+                <div class="client-badge">Client</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Main</div>
+                <a href="dashboard.html" class="menu-item active">
+                    <div class="menu-icon"><i class="fas fa-th-large"></i></div>
+                    <div>Dashboard</div>
+                </a>
+                <a href="audit_reports.html" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div>Audit Reports</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div>Analytics</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Management</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-tasks"></i></div>
+                    <div>Action Items</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-cog"></i></div>
+                    <div>Settings</div>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">Support</div>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+                    <div>Help & Support</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon"><i class="fas fa-book"></i></div>
+                    <div>Documentation</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Client Dashboard</h1>
+                <div class="header-actions">
+                    <div class="user-dropdown">
+                        <div class="user-avatar">RB</div>
+                        <div class="user-info">
+                            <div class="user-name">Robert Brown</div>
+                            <div class="user-role">Client</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Audits</div>
+                        <div class="stat-icon icon-purple">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">24</div>
+                    <div class="stat-change change-positive">
+                        <span class="change-icon"><i class="fas fa-arrow-up"></i></span>
+                        <span>3 more than last month</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Average Score</div>
+                        <div class="stat-icon icon-green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">87%</div>
+                    <div class="stat-change change-positive">
+                        <span class="change-icon"><i class="fas fa-arrow-up"></i></span>
+                        <span>5% from last month</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Open Issues</div>
+                        <div class="stat-icon icon-red">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-change change-negative">
+                        <span class="change-icon"><i class="fas fa-arrow-up"></i></span>
+                        <span>2 more than last month</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Audit Performance Trend</div>
+                        <div class="chart-actions">
+                            <div class="chart-action">Month</div>
+                            <div class="chart-action active">Quarter</div>
+                            <div class="chart-action">Year</div>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        [Audit Performance Chart]
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Issue Categories</div>
+                    </div>
+                    <div class="chart-placeholder">
+                        [Issue Categories Chart]
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-audits">
+                <div class="section-header">
+                    <div class="section-title">Recent Audits</div>
+                    <button class="btn btn-secondary">View All</button>
+                </div>
+                
+                <div class="audit-list">
+                    <div class="audit-card">
+                        <div class="audit-header">
+                            <div class="audit-title">Safety Inspection</div>
+                        </div>
+                        <div class="audit-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> John Smith</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Main Office</div>
+                            <div class="meta-item"><i class="fas fa-calendar"></i> May 20, 2025</div>
+                        </div>
+                        <div class="audit-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">85%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <div class="action-button action-view" onclick="window.location.href='audit_report.html'">View Report</div>
+                            <div class="action-button action-download">Download</div>
+                        </div>
+                    </div>
+                    
+                    <div class="audit-card">
+                        <div class="audit-header">
+                            <div class="audit-title">Quality Assurance</div>
+                        </div>
+                        <div class="audit-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Mike Williams</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Production Line A</div>
+                            <div class="meta-item"><i class="fas fa-calendar"></i> May 19, 2025</div>
+                        </div>
+                        <div class="audit-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">92%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <div class="action-button action-view">View Report</div>
+                            <div class="action-button action-download">Download</div>
+                        </div>
+                    </div>
+                    
+                    <div class="audit-card">
+                        <div class="audit-header">
+                            <div class="audit-title">Facility Maintenance</div>
+                        </div>
+                        <div class="audit-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Emily Davis</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Warehouse</div>
+                            <div class="meta-item"><i class="fas fa-calendar"></i> May 18, 2025</div>
+                        </div>
+                        <div class="audit-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-warning">78%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-warning" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <div class="action-button action-view">View Report</div>
+                            <div class="action-button action-download">Download</div>
+                        </div>
+                    </div>
+                    
+                    <div class="audit-card">
+                        <div class="audit-header">
+                            <div class="audit-title">Compliance Check</div>
+                        </div>
+                        <div class="audit-meta">
+                            <div class="meta-item"><i class="fas fa-user"></i> Robert Brown</div>
+                            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Finance Department</div>
+                            <div class="meta-item"><i class="fas fa-calendar"></i> May 16, 2025</div>
+                        </div>
+                        <div class="audit-score">
+                            <div class="score-label">Score:</div>
+                            <div class="score-value score-good">95%</div>
+                            <div class="score-bar">
+                                <div class="score-fill score-fill-good" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <div class="action-button action-view">View Report</div>
+                            <div class="action-button action-download">Download</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="issues-section">
+                <div class="section-header">
+                    <div class="section-title">Critical Issues</div>
+                    <button class="btn btn-secondary">View All Issues</button>
+                </div>
+                
+                <div class="issues-list">
+                    <div class="issue-item">
+                        <div class="issue-icon icon-red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="issue-content">
+                            <div class="issue-title">Exposed wiring in break room</div>
+                            <div class="issue-meta">
+                                <div><i class="fas fa-map-marker-alt"></i> Main Office</div>
+                                <div><i class="fas fa-tag"></i> Electrical Safety</div>
+                                <div><i class="fas fa-calendar"></i> May 20, 2025</div>
+                            </div>
+                            <div class="issue-status">
+                                <span class="status-badge status-open">Open</span>
+                                <span class="status-date">Due: May 27, 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="issue-item">
+                        <div class="issue-icon icon-yellow">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="issue-content">
+                            <div class="issue-title">Blocked fire exit in warehouse</div>
+                            <div class="issue-meta">
+                                <div><i class="fas fa-map-marker-alt"></i> Warehouse</div>
+                                <div><i class="fas fa-tag"></i> Fire Safety</div>
+                                <div><i class="fas fa-calendar"></i> May 18, 2025</div>
+                            </div>
+                            <div class="issue-status">
+                                <span class="status-badge status-in-progress">In Progress</span>
+                                <span class="status-date">Due: May 25, 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="issue-item">
+                        <div class="issue-icon icon-green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="issue-content">
+                            <div class="issue-title">Inadequate lighting in stairwell</div>
+                            <div class="issue-meta">
+                                <div><i class="fas fa-map-marker-alt"></i> Building B</div>
+                                <div><i class="fas fa-tag"></i> Workplace Hazards</div>
+                                <div><i class="fas fa-calendar"></i> May 15, 2025</div>
+                            </div>
+                            <div class="issue-status">
+                                <span class="status-badge status-resolved">Resolved</span>
+                                <span class="status-date">Closed: May 19, 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
