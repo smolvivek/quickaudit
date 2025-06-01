@@ -1,0 +1,169 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
+
+// Configure React Native
+project.ext.react = [
+    enableHermes: false,
+    bundleInDebug: false,
+    bundleInRelease: true,
+    hermesCommand: "$rootDir/node_modules/hermes-engine/bin/hermesc"
+]
+
+// Configure autolinking
+android {
+    defaultConfig {
+        ndk {
+            abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'generateAutolinkingPackageList') {
+        task.enabled = true
+    }
+}
+
+def generateAutolinkingPackageList = tasks.findByName('generateAutolinkingPackageList')
+if (generateAutolinkingPackageList != null) {
+    generateAutolinkingPackageList.doFirst {
+        def autolinkInputFile = file("${projectDir}/build/generated/autolinking/autolinking.json")
+        def autolinkOutputFile = file("${projectDir}/build/generated/autolinking/autolinking-output.json")
+        
+        if (!autolinkInputFile.exists()) {
+            autolinkInputFile.parentFile.mkdirs()
+            autolinkInputFile.createNewFile()
+        }
+        
+        if (!autolinkOutputFile.exists()) {
+            autolinkOutputFile.parentFile.mkdirs()
+            autolinkOutputFile.createNewFile()
+        }
+    }
+}
+
+tasks.register("generateAutolinking") {
+    doLast {
+        def autolinkInputFile = file("${projectDir}/build/generated/autolinking/autolinking.json")
+        def autolinkOutputFile = file("${projectDir}/build/generated/autolinking/autolinking-output.json")
+        
+        if (!autolinkInputFile.exists()) {
+            autolinkInputFile.parentFile.mkdirs()
+            autolinkInputFile.createNewFile()
+        }
+        
+        if (!autolinkOutputFile.exists()) {
+            autolinkOutputFile.parentFile.mkdirs()
+            autolinkOutputFile.createNewFile()
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'generateAutolinkingPackageList') {
+        task.dependsOn 'generateAutolinking'
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:react-native")
+    implementation("com.facebook.react:react-native-gradle-plugin")
+    implementation("com.google.android.gms:play-services-base:18.2.0")
+    implementation("com.google.firebase:firebase-core:22.3.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.0")
+}
+
+/**
+ * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ */
+def enableProguardInReleaseBuilds = false
+
+/**
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+android {
+    namespace "com.quickauditapp"
+    compileSdkVersion 34
+    ndkVersion "25.1.8937393"
+    buildToolsVersion "34.0.0"
+
+    defaultConfig {
+        applicationId "com.quickauditapp"
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            signingConfig signingConfigs.debug
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:react-native-gradle-plugin")
+    implementation project(':react-native-async-storage_async-storage')
+    implementation platform('com.google.firebase:firebase-bom:32.7.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}")
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
+    
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

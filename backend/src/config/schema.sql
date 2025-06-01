@@ -1,0 +1,56 @@
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  organization VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create audits table
+CREATE TABLE IF NOT EXISTS audits (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  description TEXT,
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
+  user_id INTEGER REFERENCES users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create findings table
+CREATE TABLE IF NOT EXISTS findings (
+  id SERIAL PRIMARY KEY,
+  audit_id INTEGER REFERENCES audits(id),
+  description TEXT NOT NULL,
+  severity VARCHAR(50) NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'open',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create photos table
+CREATE TABLE IF NOT EXISTS photos (
+  id SERIAL PRIMARY KEY,
+  audit_id INTEGER REFERENCES audits(id),
+  finding_id INTEGER REFERENCES findings(id),
+  url VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create subscriptions table
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  stripe_customer_id VARCHAR(255),
+  stripe_subscription_id VARCHAR(255),
+  plan_type VARCHAR(50) NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  current_period_end TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+); 
